@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Sena — For You, My Love</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #f7f5f1;
+      --text-primary: #2d2824;
+      --text-secondary: #746b62;
+      --text-muted: #9f9488;
+      --pill-bg: #edd6d0;
+      --pill-text: #2d2824;
+      --wax-seal: #c7887d;
+      --wax-seal-dark: #a9675c;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-script: 'Great Vibes', cursive;
+      --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .stage-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #f7f5f1;
+    }
+
+    /* Background image layer using relative path for GitHub Pages */
+    .hero-visual-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 1;
+      pointer-events: none;
+      transition: transform 0.15s ease-out;
+    }
+
+    /* Top Header */
+    .top-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: max(2rem, env(safe-area-inset-top)) 4.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .logo-sena {
+      font-family: var(--font-serif);
+      font-size: 3.2rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .logo-sena:hover {
+      opacity: 0.85;
+    }
+
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .nav-link-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.5rem 1.15rem;
+      border-radius: 999px;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-link-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-link-btn.love-pill {
+      background-color: var(--pill-bg);
+      color: var(--pill-text);
+      font-weight: 500;
+    }
+
+    .nav-link-btn.love-pill:hover {
+      background-color: #e4c5bd;
+      transform: translateY(-1px);
+    }
+
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Center Hotspot */
+    .center-hotspot {
+      position: absolute;
+      top: 36%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      height: 380px;
+      z-index: 15;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .daisy-click-zone {
+      width: 180px;
+      height: 180px;
+      position: absolute;
+      top: 0;
+      border-radius: 50%;
+    }
+
+    .wax-hotspot-indicator {
+      position: absolute;
+      bottom: 22%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    .wax-pulse-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px dashed rgba(199, 136, 125, 0.65);
+      animation: ringRotate 8s linear infinite;
+    }
+
+    @keyframes ringRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .wax-glow-hover {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(235, 170, 160, 0.45) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .center-hotspot:hover .wax-glow-hover {
+      opacity: 1;
+    }
+
+    .tap-tooltip {
+      position: absolute;
+      bottom: 5%;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      animation: bounceHint 2.5s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes bounceHint {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Music Player Widget */
+    .music-widget {
+      position: absolute;
+      bottom: max(2.6rem, env(safe-area-inset-bottom));
+      left: 3.5rem;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 30px rgba(110, 95, 80, 0.08);
+      border-radius: 16px;
+      padding: 1rem 1.3rem;
+      width: 250px;
+      transition: all 0.3s ease;
+    }
+
+    .music-widget:hover {
+      box-shadow: 0 14px 36px rgba(110, 95, 80, 0.14);
+    }
+
+    .music-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .music-sublabel {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+    }
+
+    .music-note-icon {
+      font-size: 0.85rem;
+      color: var(--wax-seal-dark);
+      display: inline-block;
+    }
+
+    .music-note-icon.animating {
+      animation: ringRotate 3s infinite linear;
+    }
+
+    .music-song-name {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 0.15rem;
+      margin-bottom: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .ctrl-btn:hover {
+      color: var(--text-primary);
+      transform: scale(1.1);
+    }
+
+    .play-pause-circle {
+      width: 32px;
+      height: 32px;
+      background: var(--text-primary);
+      color: #fff !important;
+      border-radius: 50%;
+    }
+
+    .play-pause-circle:hover {
+      background: #000;
+      transform: scale(1.06);
+    }
+
+    .scrubber-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .scrubber-fill {
+      height: 100%;
+      background: var(--wax-seal);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.2s linear;
+    }
+
+    /* Next Link & Curved Arrow */
+    .next-link-group {
+      position: absolute;
+      bottom: max(3rem, env(safe-area-inset-bottom));
+      right: 4.8rem;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .next-link-group:hover {
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .curved-arrow-svg {
+      transition: transform 0.3s ease;
+    }
+
+    .next-link-group:hover .curved-arrow-svg {
+      transform: translateX(4px);
+    }
+
+    /* Modal Backdrop & Parchment Sheet */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 20, 16, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .letter-parchment-sheet {
+      position: relative;
+      background: #fffdfa;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      max-height: 90dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 24px;
+      box-shadow: 0 25px 65px rgba(25, 18, 14, 0.38);
+      border: 1px solid rgba(220, 208, 195, 0.85);
+      padding: 3.5rem 3.5rem 3rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--pill-bg) transparent;
+      transform: translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active .letter-parchment-sheet,
+    .modal-overlay.active .generic-modal-card {
+      transform: translateY(0);
+    }
+
+    .close-sheet-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .close-sheet-btn:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: var(--text-primary);
+      transform: rotate(90deg);
+    }
+
+    .wax-seal-header {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.4rem;
+      background: radial-gradient(circle at 35% 35%, #e29b8f, #af5f52 80%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        0 8px 20px rgba(175, 95, 82, 0.35),
+        inset 0 2px 4px rgba(255, 255, 255, 0.4),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .wax-seal-header::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(255, 255, 255, 0.45);
+    }
+
+    .wax-seal-header span {
+      font-family: var(--font-serif);
+      font-size: 1.9rem;
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .letter-title-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .letter-top-meta {
+      font-size: 0.82rem;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .letter-main-h2 {
+      font-family: var(--font-serif);
+      font-size: 2.15rem;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--text-primary);
+      margin-top: 0.5rem;
+    }
+
+    .letter-separator {
+      width: 48px;
+      height: 2px;
+      background: var(--pill-bg);
+      margin: 1.2rem auto 0;
+    }
+
+    .letter-prose {
+      font-family: var(--font-serif);
+      font-size: 1.24rem;
+      line-height: 1.85;
+      color: #38312a;
+    }
+
+    .letter-prose p {
+      margin-bottom: 1.4rem;
+      text-align: justify;
+    }
+
+    .salutation-line {
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1.1rem !important;
+    }
+
+    .highlight-love-quote {
+      margin: 2rem 0;
+      padding: 1.2rem 1.8rem;
+      background: rgba(237, 214, 208, 0.28);
+      border-left: 3.5px solid var(--wax-seal);
+      border-radius: 0 14px 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+    }
+
+    .quote-daisy-emoji {
+      font-size: 2rem;
+    }
+
+    .quote-phrase {
+      font-size: 1.38rem !important;
+      font-weight: 600;
+      color: var(--text-primary) !important;
+      margin-bottom: 0 !important;
+      font-style: italic;
+    }
+
+    .sign-off-block {
+      margin-top: 2.6rem;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sign-off-title {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+    }
+
+    .sign-off-signature {
+      font-family: var(--font-script);
+      font-size: 2.6rem;
+      color: var(--wax-seal-dark);
+      font-weight: normal;
+      line-height: 1.2;
+    }
+
+    .modal-actions-bar {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.2rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .action-cta-btn {
+      flex: 1;
+      background: var(--text-primary);
+      color: #fff;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      padding: 0.9rem 1.4rem;
+      min-height: 48px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+
+    .action-cta-btn:hover {
+      background: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    }
+
+    .action-cta-btn.secondary {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-primary);
+    }
+
+    .action-cta-btn.secondary:hover {
+      background: rgba(0, 0, 0, 0.09);
+    }
+
+    /* Generic Modals */
+    .generic-modal-card {
+      position: relative;
+      background: #fffdfa;
+      border-radius: 22px;
+      padding: 3rem;
+      width: 100%;
+      max-width: 580px;
+      max-height: 90dvh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.24);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      transform: translateY(20px);
+      transition: transform 0.35s ease;
+    }
+
+    .modal-h3 {
+      font-family: var(--font-serif);
+      font-size: 2.3rem;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    .modal-p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.8rem;
+    }
+
+    /* Polaroid Layout */
+    .polaroid-layout {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.1rem;
+    }
+
+    .polaroid-frame {
+      background: #fff;
+      padding: 0.75rem 0.75rem 1.1rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      border-radius: 6px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .polaroid-frame:nth-child(1) { transform: rotate(-2deg); }
+    .polaroid-frame:nth-child(2) { transform: rotate(2deg); }
+    .polaroid-frame:nth-child(3) { transform: rotate(-1deg); }
+
+    .polaroid-frame:hover {
+      transform: rotate(0deg) scale(1.05);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+    .polaroid-img-box {
+      height: 120px;
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+    }
+
+    .img-1 { background: linear-gradient(135deg, #ffd3b6, #ffaaa5); }
+    .img-2 { background: linear-gradient(135deg, #d4fc79, #96e6a1); }
+    .img-3 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+
+    .polaroid-text {
+      font-family: var(--font-serif);
+      font-size: 0.98rem;
+      color: var(--text-primary);
+      font-style: italic;
+    }
+
+    /* Flower Arena */
+    .garden-arena-box {
+      width: 100%;
+      height: 220px;
+      background: #f7f4ec;
+      border: 2px dashed #ded7c9;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .arena-tap-hint {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .arena-sprout {
+      position: absolute;
+      font-size: 2rem;
+      transform: translate(-50%, -50%);
+      animation: sproutPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes sproutPop {
+      from { transform: translate(-50%, -50%) scale(0); }
+      to { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .garden-counter-text {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    /* Toast */
+    .floating-love-toast {
+      position: fixed;
+      top: max(5.5rem, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(32, 25, 20, 0.92);
+      color: #fff;
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+      z-index: 200;
+      pointer-events: none;
+      max-width: 90vw;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .floating-love-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Mobile Nav Sheet */
+    .mobile-nav-sheet {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .mobile-nav-item {
+      background: #f7f4ed;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 1rem 1.2rem;
+      border-radius: 14px;
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-item:active {
+      background: var(--pill-bg);
+      transform: scale(0.98);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .top-header { padding: max(1.5rem, env(safe-area-inset-top)) 2rem 1rem; }
+      .logo-sena { font-size: 2.5rem; }
+      .music-widget { left: 2rem; bottom: max(2rem, env(safe-area-inset-bottom)); width: 220px; }
+      .next-link-group { right: 2.2rem; bottom: max(2.2rem, env(safe-area-inset-bottom)); }
+      .letter-parchment-sheet { padding: 2.8rem 2.2rem 2.2rem; }
+    }
+
+    @media (max-width: 680px) {
+      .top-header { padding: max(1rem, env(safe-area-inset-top)) 1.25rem 0.5rem; }
+      .logo-sena { font-size: 2.1rem; }
+      .nav-group { gap: 0.6rem; }
+      .nav-link-btn.hide-on-mobile { display: none; }
+      .nav-link-btn.love-pill { padding: 0.45rem 1rem; font-size: 0.88rem; }
+      .menu-toggle { padding: 0.45rem 0.85rem; font-size: 0.88rem; }
+      .hero-visual-bg { object-position: 50% 42%; }
+      .center-hotspot { width: 280px; height: 330px; top: 42%; }
+      .wax-hotspot-indicator { bottom: 24%; width: 64px; height: 64px; }
+      .tap-tooltip { bottom: 7%; font-size: 0.78rem; padding: 0.4rem 0.95rem; }
+      
+      .music-widget {
+        left: 1.2rem;
+        right: 5.5rem;
+        width: auto;
+        max-width: calc(100% - 6.5rem);
+        bottom: max(1.2rem, env(safe-area-inset-bottom));
+        padding: 0.75rem 0.95rem;
+        border-radius: 14px;
+      }
+      .music-sublabel { font-size: 0.68rem; }
+      .music-song-name { font-size: 0.95rem; margin-bottom: 0.5rem; }
+      .music-controls-row { gap: 0.5rem; }
+      .ctrl-btn { min-width: 28px; min-height: 28px; padding: 2px; }
+      .play-pause-circle { width: 28px; height: 28px; }
+
+      .next-link-group {
+        right: 1.2rem;
+        bottom: max(1.4rem, env(safe-area-inset-bottom));
+        font-size: 1.15rem;
+        gap: 0.35rem;
+      }
+      .curved-arrow-svg { width: 26px; height: 18px; }
+
+      .letter-backdrop-mask {
+        padding: max(0.8rem, env(safe-area-inset-top)) 0.8rem max(0.8rem, env(safe-area-inset-bottom));
+      }
+      .letter-parchment-sheet {
+        padding: 2.2rem 1.4rem 1.8rem;
+        max-height: 94dvh;
+        border-radius: 18px;
+      }
+      .close-sheet-btn { top: 1rem; right: 1rem; width: 38px; height: 38px; }
+      .wax-seal-header { width: 54px; height: 54px; margin-bottom: 1rem; }
+      .wax-seal-header span { font-size: 1.6rem; }
+      .letter-main-h2 { font-size: 1.6rem; line-height: 1.35; }
+      .letter-prose { font-size: 1.12rem; line-height: 1.75; }
+      .letter-prose p { margin-bottom: 1.1rem; }
+      .salutation-line { font-size: 1.35rem; }
+      .highlight-love-quote { margin: 1.5rem 0; padding: 1rem 1.2rem; gap: 0.75rem; }
+      .quote-phrase { font-size: 1.18rem !important; }
+      .sign-off-signature { font-size: 2.2rem; }
+      .modal-actions-bar { flex-direction: column; gap: 0.7rem; margin-top: 1.6rem; padding-top: 1.2rem; }
+      .action-cta-btn { width: 100%; padding: 0.8rem 1rem; font-size: 0.85rem; }
+
+      .generic-modal-card { padding: 2rem 1.4rem; border-radius: 18px; }
+      .modal-h3 { font-size: 1.8rem; }
+      .polaroid-layout {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 0.9rem;
+        padding-bottom: 0.8rem;
+        -webkit-overflow-scrolling: touch;
+      }
+      .polaroid-frame { flex: 0 0 210px; scroll-snap-align: center; }
+      .polaroid-img-box { height: 140px; }
+      .garden-arena-box { height: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage-container">
+    <!-- Hidden YouTube Audio Player -->
+    <div id="youtube-audio-player" style="position:fixed;left:-9999px;top:-9999px;opacity:0;pointer-events:none;"></div>
+
+    <!-- 1:1 Pixel-Perfect Base Visual with Relative Path for GitHub Pages -->
+    <img 
+      id="hero-img"
+      src="./sena-minimal.jpg" 
+      alt="Sena 3D Daisy and Letter" 
+      class="hero-visual-bg"
+    />
+
+    <!-- Top Header Navigation -->
+    <header class="top-header">
+      <div class="logo-sena" onclick="openModal('about-modal')">Sena</div>
+
+      <nav class="nav-group">
+        <button class="nav-link-btn hide-on-mobile" onclick="openModal('about-modal')">About</button>
+        <button class="nav-link-btn love-pill" onclick="handleOpenLetter()">Love</button>
+        <button class="nav-link-btn hide-on-mobile" onclick="openModal('memory-modal')">Memory</button>
+        <button class="nav-link-btn hide-on-mobile" onclick="openModal('world-modal')">Sena's World</button>
+        <button class="nav-link-btn menu-toggle" onclick="openModal('menu-modal')">
+          Menu <span style="font-size:1.1rem;margin-left:2px;">☰</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Center Interactive Hotspot -->
+    <div class="center-hotspot" onclick="handleOpenLetter()" title="Mektubu Açmak İçin Dokun">
+      <!-- Upper Daisy Click Hotspot -->
+      <div class="daisy-click-zone" onclick="handleDaisyClick(event)" title="Papatyadan Bir Dilek Tut"></div>
+
+      <!-- Wax Seal Hotspot Indicator -->
+      <div class="wax-hotspot-indicator">
+        <div class="wax-pulse-ring"></div>
+        <div class="wax-glow-hover"></div>
+      </div>
+
+      <!-- Tap / Hover Hint -->
+      <div class="tap-tooltip">
+        <span>✨</span> Mektubu Açmak İçin Dokun
+      </div>
+    </div>
+
+    <!-- Bottom Left: Glassmorphic Music Player -->
+    <div class="music-widget">
+      <div class="music-label-row">
+        <span class="music-sublabel">Currently Playing:</span>
+        <span class="music-note-icon" id="music-note-anim">🎵</span>
+      </div>
+      <div class="music-song-name" title="Dolu Kadehi Ters Tut - Dilerim Ki">
+        Dilerim Ki
+      </div>
+
+      <div class="music-controls-row">
+        <button class="ctrl-btn" onclick="restartSong()" title="Başa Sar">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z"></path><path d="M3 20V4"></path></svg>
+        </button>
+        
+        <button class="ctrl-btn play-pause-circle" id="play-pause-btn" onclick="togglePlay()" title="Oynat / Duraklat">
+          <svg id="play-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+          <svg id="pause-svg" style="display:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="4" height="16" x="6" y="4"></rect><rect width="4" height="16" x="14" y="4"></rect></svg>
+        </button>
+
+        <button class="ctrl-btn" onclick="restartSong()" title="Tekrar Çal">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4v16"></path><path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z"></path></svg>
+        </button>
+
+        <div class="scrubber-track" id="scrubber-track" onclick="handleScrubberClick(event)" title="İlerleme">
+          <div class="scrubber-fill" id="scrubber-fill"></div>
+        </div>
+
+        <button class="ctrl-btn" id="mute-btn" onclick="toggleMute()" title="Sesi Aç / Kapat">
+          <svg id="vol-on-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+          <svg id="vol-off-svg" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Right: Next Link & Curved Arrow -->
+    <div class="next-link-group" onclick="handleOpenLetter()">
+      <span>Next</span>
+      <svg class="curved-arrow-svg" width="34" height="22" viewBox="0 0 40 25" fill="none">
+        <path d="M3 15 C 15 22, 28 18, 36 8" stroke="#7a7065" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M31 6 L 37 8 L 34 14" stroke="#7a7065" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="floating-love-toast" id="toast"></div>
+
+  <!-- MODAL 1: The Romantic Mimosa Letter -->
+  <div class="modal-overlay" id="letter-modal" onclick="closeAllModals()">
+    <div class="letter-parchment-sheet" onclick="event.stopPropagation()">
+      <button class="close-sheet-btn" onclick="closeAllModals()">✕</button>
+
+      <div class="wax-seal-header">
+        <span>S</span>
+      </div>
+
+      <div class="letter-title-section">
+        <span class="letter-top-meta">Eylül, 2026 — Sana Dair</span>
+        <h2 class="letter-main-h2">Mimoza Çiçeğinin Küskünlüğü ve Bir Papatyanın Sadakati</h2>
+        <div class="letter-separator"></div>
+      </div>
+
+      <div class="letter-prose">
+        <p class="salutation-line">Sena'm, Sevgilim,</p>
+
+        <p>
+          Bilir misin; mimoza bu yeryüzünün en narin, en duygu yüklü çiçeğidir. En ufak bir hoyrat rüzgârda, düşünülmeden söylenen tek bir kelimede ya da aceleci bir dokunuşta usulca yapraklarını içine kapatır. İnsanlar buna mimoza çiçeğinin <em>'küskünlüğü'</em> der...
+        </p>
+
+        <p>
+          Oysa mimoza küsmez aslında; sadece incinmekten korkan o tertemiz kalbini dünyanın hoyrat telaşından saklar. Kapanan her yaprağında sessizce anlaşılmayı bekler. Ve onu gerçekten tanıyan, şefkatle yaklaşan, sabırla bekleyen sıcacık bir nefes hissettiğinde; yapraklarını yeniden, eskisinden çok daha büyük bir aşkla ve güvenle açar güneşe.
+        </p>
+
+        <p>
+          Sen benim hayatımdaki o en kıymetli mimozamsın Sena. Senin kırılganlığın bir zayıflık değil; kalbinin ne kadar temiz, ne kadar derin ve ne kadar nadide olduğunun en güzel kanıtı. Ben senin tek bir yaprağını bile incitmeden, her fırtınanda önüne siper olarak, sana daima bahar güneşi gibi şefkatle sarılmak istiyorum.
+        </p>
+
+        <p>
+          Ve karşında duran, çok sevdiğin bu papatya gibi; ömrümün sonuna kadar her taç yaprağımda tereddütsüz tek bir gerçek fısıldayacağım sana:
+        </p>
+
+        <div class="highlight-love-quote">
+          <span class="quote-daisy-emoji">🌼</span>
+          <p class="quote-phrase">"Seviyor... Sonsuza dek çok seviyor."</p>
+        </div>
+
+        <p>
+          Küsmesin o güzel gözlerin hayata; çünkü bu bahçedeki her papatya, gökteki her yıldız ve benim atan her kalp atışım yalnızca senin için.
+        </p>
+
+        <div class="sign-off-block">
+          <span class="sign-off-title">Daima Seninle,</span>
+          <strong class="sign-off-signature">Seni Seven Kalbin</strong>
+        </div>
+      </div>
+
+      <div class="modal-actions-bar">
+        <button class="action-cta-btn" onclick="closeAllModals(); handleDaisyClick(event)">
+          🌼 Papatyadan Bir Dilek Tut
+        </button>
+        <button class="action-cta-btn secondary" onclick="ensureMusicPlaying(); showToast('🎵 Dolu Kadehi Ters Tut - Dilerim Ki çalıyor...')">
+          🎵 Şarkımızı Çal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Memory Gallery -->
+  <div class="modal-overlay" id="memory-modal" onclick="closeAllModals()">
+    <div class="generic-modal-card" onclick="event.stopPropagation()">
+      <button class="close-sheet-btn" onclick="closeAllModals()">✕</button>
+      <h3 class="modal-h3">Sena ile Unutulmaz Anlar</h3>
+      <p class="modal-p">Her papatya bir gün solar ama seninle biriktirdiğimiz anılar sonsuza dek taze kalır.</p>
+
+      <div class="polaroid-layout">
+        <div class="polaroid-frame">
+          <div class="polaroid-img-box img-1"></div>
+          <span class="polaroid-text">İlk Gülüşün 🌸</span>
+        </div>
+        <div class="polaroid-frame">
+          <div class="polaroid-img-box img-2"></div>
+          <span class="polaroid-text">Papatyalarımız 🌼</span>
+        </div>
+        <div class="polaroid-frame">
+          <div class="polaroid-img-box img-3"></div>
+          <span class="polaroid-text">Sonsuzluğumuz ✨</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: About Modal -->
+  <div class="modal-overlay" id="about-modal" onclick="closeAllModals()">
+    <div class="generic-modal-card" onclick="event.stopPropagation()">
+      <button class="close-sheet-btn" onclick="closeAllModals()">✕</button>
+      <h3 class="modal-h3">Bu Özel Köşe Hakkında</h3>
+      <p class="modal-p">
+        Bu özel dijital köşe; papatyaları dünyadaki her şeyden çok seven, kalbi mimoza çiçeği kadar zarif ve narin olan <strong>Sena</strong> için sevgiyle hazırlandı.
+      </p>
+      <p class="modal-p">
+        Ekrandaki mum mühürlü mektuba veya papatyaya dokunarak sana özel yazılmış satırları okuyabilir, sol altta çalan <em>"Dolu Kadehi Ters Tut - Dilerim Ki"</em> şarkısının keyfini çıkarabilirsin.
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Sena's World (Flower Sprout Arena) -->
+  <div class="modal-overlay" id="world-modal" onclick="closeAllModals()">
+    <div class="generic-modal-card" onclick="event.stopPropagation()">
+      <button class="close-sheet-btn" onclick="closeAllModals()">✕</button>
+      <h3 class="modal-h3">Sena'nın Papatya Dünyası</h3>
+      <p class="modal-p">Aşağıdaki alana tıkladıkça Sena için yeni papatyalar ve çiçekler yeşersin!</p>
+
+      <div class="garden-arena-box" id="garden-arena" onclick="handleArenaClick(event)">
+        <span class="arena-tap-hint" id="arena-hint">Tıkla ve Bahçeni Büyüt 🌱</span>
+      </div>
+
+      <div class="garden-counter-text">
+        Toplam Açan Çiçek: <strong id="flower-counter">0</strong> 🌼
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: Mobile Navigation Menu -->
+  <div class="modal-overlay" id="menu-modal" onclick="closeAllModals()">
+    <div class="generic-modal-card" onclick="event.stopPropagation()">
+      <button class="close-sheet-btn" onclick="closeAllModals()">✕</button>
+      <h3 class="modal-h3">Menü</h3>
+      <p class="modal-p">Sena'ya özel hazırlanan köşeleri keşfet:</p>
+
+      <div class="mobile-nav-sheet">
+        <div class="mobile-nav-item" onclick="openModal('letter-modal'); handleOpenLetter();">
+          <span>💌 Mimoza & Papatya Mektubu</span>
+          <span>➔</span>
+        </div>
+        <div class="mobile-nav-item" onclick="openModal('memory-modal')">
+          <span>📸 Hatıralarımız</span>
+          <span>➔</span>
+        </div>
+        <div class="mobile-nav-item" onclick="openModal('world-modal')">
+          <span>🌼 Sena'nın Papatya Bahçesi</span>
+          <span>➔</span>
+        </div>
+        <div class="mobile-nav-item" onclick="openModal('about-modal')">
+          <span>🤍 Bu Sayfa Hakkında</span>
+          <span>➔</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // --- Mouse Parallax ---
+    const heroImg = document.getElementById('hero-img');
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 16;
+      const y = (e.clientY / window.innerHeight - 0.5) * 12;
+      heroImg.style.transform = `scale(1.04) translate(${x * 0.4}px, ${y * 0.4}px)`;
+    });
+
+    // --- Modal Management ---
+    function openModal(id) {
+      closeAllModals();
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('active');
+      }
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    }
+
+    // --- Toast Notification ---
+    const toast = document.getElementById('toast');
+    let toastTimer = null;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3200);
+    }
+
+    // --- Quotes & Daisy Interaction ---
+    const loveQuotes = [
+      "Sena: 'Beni Seviyor... Çok Seviyor!' 🌼",
+      "Sen benim en güzel manzaramsın Sena. ✨",
+      "Mimoza kadar narin, papatya kadar saf sevgilim... 🤍",
+      "İyi ki varsın, iyi ki hayatımdasın Sena. 🌸",
+      "Gülüşün bahar sabahı gibi içimi ısıtıyor... ☀️",
+      "Yeryüzündeki tüm papatyalar senin için açıyor. 🌿"
+    ];
+    let quoteIdx = 0;
+
+    function handleDaisyClick(e) {
+      if (e) e.stopPropagation();
+      showToast(loveQuotes[quoteIdx % loveQuotes.length]);
+      quoteIdx++;
+      if (window.confetti) {
+        window.confetti({
+          particleCount: 25,
+          spread: 50,
+          origin: { y: 0.5, x: 0.5 },
+          colors: ['#ffffff', '#ffd200']
+        });
+      }
+    }
+
+    function handleOpenLetter() {
+      ensureMusicPlaying();
+      if (window.confetti) {
+        window.confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.65 },
+          colors: ['#ebd5cd', '#f5a623', '#ffffff', '#c7887d']
+        });
+      }
+      openModal('letter-modal');
+    }
+
+    // --- Sena's World Flower Sprouting ---
+    let flowerCount = 0;
+    function handleArenaClick(e) {
+      const arena = document.getElementById('garden-arena');
+      const hint = document.getElementById('arena-hint');
+      const counter = document.getElementById('flower-counter');
+      if (hint) hint.style.display = 'none';
+
+      const rect = arena.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const icons = ['🌼', '🌸', '💐', '🤍', '✨'];
+      const icon = icons[Math.floor(Math.random() * icons.length)];
+
+      const flower = document.createElement('span');
+      flower.className = 'arena-sprout';
+      flower.style.left = x + 'px';
+      flower.style.top = y + 'px';
+      flower.textContent = icon;
+      arena.appendChild(flower);
+
+      flowerCount++;
+      counter.textContent = flowerCount;
+    }
+
+    // --- YouTube Audio Player ---
+    let ytPlayer = null;
+    let isPlaying = false;
+    let isMuted = false;
+
+    // Load YouTube API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = function() {
+      ytPlayer = new YT.Player('youtube-audio-player', {
+        height: '1',
+        width: '1',
+        videoId: 'aDju79MtUR8',
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          loop: 1,
+          playlist: 'aDju79MtUR8',
+          modestbranding: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: function(e) {
+            e.target.playVideo();
+            e.target.unMute();
+            setPlayState(true);
+          },
+          onStateChange: function(e) {
+            if (e.data === YT.PlayerState.PLAYING) {
+              setPlayState(true);
+            } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+              setPlayState(false);
+            }
+          }
+        }
+      });
+    };
+
+    function setPlayState(playing) {
+      isPlaying = playing;
+      const playSvg = document.getElementById('play-svg');
+      const pauseSvg = document.getElementById('pause-svg');
+      const noteAnim = document.getElementById('music-note-anim');
+      if (playing) {
+        playSvg.style.display = 'none';
+        pauseSvg.style.display = 'block';
+        noteAnim.classList.add('animating');
+      } else {
+        playSvg.style.display = 'block';
+        pauseSvg.style.display = 'none';
+        noteAnim.classList.remove('animating');
+      }
+    }
+
+    function togglePlay() {
+      if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+      if (isPlaying) {
+        ytPlayer.pauseVideo();
+      } else {
+        ytPlayer.playVideo();
+        ytPlayer.unMute();
+      }
+    }
+
+    function ensureMusicPlaying() {
+      if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        ytPlayer.playVideo();
+        ytPlayer.unMute();
+      }
+    }
+
+    function restartSong() {
+      if (ytPlayer && typeof ytPlayer.seekTo === 'function') {
+        ytPlayer.seekTo(0);
+        ytPlayer.playVideo();
+      }
+    }
+
+    function toggleMute() {
+      if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
+      const volOn = document.getElementById('vol-on-svg');
+      const volOff = document.getElementById('vol-off-svg');
+      if (ytPlayer.isMuted()) {
+        ytPlayer.unMute();
+        volOn.style.display = 'block';
+        volOff.style.display = 'none';
+      } else {
+        ytPlayer.mute();
+        volOn.style.display = 'none';
+        volOff.style.display = 'block';
+      }
+    }
+
+    function handleScrubberClick(e) {
+      if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      const dur = ytPlayer.getDuration() || 0;
+      ytPlayer.seekTo(ratio * dur);
+    }
+
+    // Scrubber update interval
+    setInterval(() => {
+      if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && isPlaying) {
+        const cur = ytPlayer.getCurrentTime() || 0;
+        const dur = ytPlayer.getDuration() || 1;
+        const fill = document.getElementById('scrubber-fill');
+        if (fill) fill.style.width = ((cur / dur) * 100) + '%';
+      }
+    }, 500);
+
+    // Browser audio unlock on first user gesture
+    function unlockAudio() {
+      ensureMusicPlaying();
+    }
+    window.addEventListener('click', unlockAudio, { once: true });
+    window.addEventListener('pointerdown', unlockAudio, { once: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true });
+  </script>
+</body>
+</html>
